@@ -2,7 +2,8 @@ import pygame
 import sys
 from pygame.locals import *
 from constantes import *
-from gui_form_menu_game_l1 import FormGameLevel1  # Importa tu módulo
+from gui_form_menu_game_l1 import FormGameLevel1
+
 
 # Inicialización de Pygame y otras configuraciones
 pygame.init()

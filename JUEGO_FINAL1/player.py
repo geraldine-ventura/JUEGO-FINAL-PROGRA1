@@ -130,7 +130,7 @@ class Player:
             repeat_frame=1,
         )
 
-        # Inicializa las propiedades del jugador, como su posición (__move_x y __mov
+        # Inicializa las propiedades del jugador, como su posición (__move_x y __mov_y
         self.frame = 0
         self.lives = 5
         self.score = 0
@@ -165,7 +165,7 @@ class Player:
         self.is_run = False
         self.is_shoot = False
         self.is_knife = False
-        self.is_dead = False
+        # self.is_dead = False
 
         self.tiempo_transcurrido_animation = 0
         self.frame_rate_ms = frame_rate_ms
@@ -178,12 +178,15 @@ class Player:
         self.tiempo_last_jump = 0  # en base al tiempo transcurrido general
         self.interval_time_jump = interval_time_jump
 
+        self.bullet_list = []
+
     ### CORREGIR COALICIONES DE "DEAD"!!----------verr no funka------------------------>>>>>>>>>>>>>>>>>>>>>>>>>>
 
     def dead(self, direction, enemy_shoot_rect):
-        if self.ground_collition_rect.colliderect(enemy_shoot_rect):
+        if enemy_shoot_rect is not None and self.ground_collition_rect.colliderect(
+            enemy_shoot_rect
+        ):
             print("Colisión con disparo del enemigo, cambia animación a shoot.")
-
             if direction == DIRECTION_R:
                 self.animation = self.shoot_r
             else:
@@ -191,7 +194,6 @@ class Player:
             self.reset_animation()
         else:
             print("Sin colisión con disparo del enemigo, cambia animación a dead")
-
             if self.direction != direction or (
                 self.animation != self.dead_r and self.animation != self.dead_l
             ):
@@ -384,6 +386,8 @@ class Player:
                 screen, color=(255, 255, 0), rect=self.ground_collition_rect
             )
 
+        # Esto actualiza la imagen del objeto con el cuadro de animación actual.
+        # Dibuja la imagen en la pantalla en la posición especificada por el atributo rect del objeto.
         self.image = self.animation[self.frame]
         screen.blit(self.image, self.rect)
 
@@ -426,19 +430,20 @@ class Player:
                 )  # verifica si ha pasado suficiente tiempo desde el último salto
                 self.tiempo_last_jump = self.tiempo_transcurrido
         #######----------------------shoot/knife------------------------ ------>>>>>
+
+        # Desactiva ambos, disparo y cuchillo
+
         if not keys[pygame.K_a]:
             self.shoot(False)
 
         if not keys[pygame.K_a]:
             self.knife(False)
         #######---------------------------shoot------------------->>>>>>>>>>>>>>>>>>
+
         if keys[pygame.K_s] and not keys[pygame.K_a]:
             self.shoot()
 
-            """ self.reset_animation()  # Resetea la animación después de disparar """
-
         #######---------------------------knife------------------->>>>>>>>>>>>>>>>>>
+
         if keys[pygame.K_a] and not keys[pygame.K_s]:
             self.knife()
-
-            """ self.reset_animation()  # Resetea la animación después de realizar el ataque con cuchillo """

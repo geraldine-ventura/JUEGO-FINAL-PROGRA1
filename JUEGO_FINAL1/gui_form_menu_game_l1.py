@@ -5,7 +5,7 @@ from player import Player
 from enemigo import Enemy
 from plataforma import Plataform
 from background import Background
-from bullet import Bullet
+from bullet import Bullet  # Asegúrate de que la ruta del módulo sea correcta
 
 
 class FormGameLevel1:
@@ -26,7 +26,7 @@ class FormGameLevel1:
             path="JUEGO_FINAL1/images/back/depositphotos_56565763-stock-illustration-seamless-background-fabulous-night-forest (1).jpg",
         )
 
-        self.player_1 = Player(
+        self.player = Player(
             x=0,
             y=400,
             speed_walk=6,
@@ -44,7 +44,7 @@ class FormGameLevel1:
         self.enemy_list.append(
             Enemy(
                 x=450,
-                y=200,
+                y=400,
                 speed_walk=6,
                 speed_run=5,
                 gravity=14,
@@ -59,7 +59,7 @@ class FormGameLevel1:
         self.enemy_list.append(
             Enemy(
                 x=900,
-                y=0,
+                y=400,
                 speed_walk=6,
                 speed_run=5,
                 gravity=14,
@@ -73,10 +73,10 @@ class FormGameLevel1:
         )
 
         self.plataform_list = []
-
-        self.plataform_list.append(Plataform(x=400, y=500, width=50, height=50, type=0))
-        self.plataform_list.append(Plataform(x=450, y=500, width=50, height=50, type=1))
-        self.plataform_list.append(Plataform(x=500, y=500, width=50, height=50, type=2))
+        self.plataform_list.append(Plataform(x=50, y=600, width=50, height=50, type=0))
+        self.plataform_list.append(Plataform(x=400, y=500, width=50, height=50, type=1))
+        self.plataform_list.append(Plataform(x=450, y=500, width=50, height=50, type=2))
+        self.plataform_list.append(Plataform(x=500, y=500, width=50, height=50, type=3))
         self.plataform_list.append(
             Plataform(x=600, y=430, width=50, height=50, type=12)
         )
@@ -96,14 +96,41 @@ class FormGameLevel1:
             Plataform(x=900, y=360, width=50, height=50, type=14)
         )
 
-        self.bullet_list = []
+        # self.bullet_list = []
+        self.player_bullet_list = []
+        self.enemy_bullet_list = []
 
     def update(self, keys, delta_ms):
         for enemy_element in self.enemy_list:
             enemy_element.update(delta_ms, self.plataform_list)
 
-        self.player_1.events(delta_ms, keys)
-        self.player_1.update(delta_ms, self.plataform_list)
+            # Obtén las coordenadas a las que el enemigo apunta (esto puede variar según tu lógica)
+            print("Player position:", self.player.rect.x, self.player.rect.y)
+
+            target_x, target_y = self.player.rect.x, self.player.rect.y
+
+            # Dispara una bala de enemigo
+            enemy_bullet = Bullet(
+                owner=enemy_element,
+                x_init=enemy_element.rect.x,
+                y_init=enemy_element.rect.y,
+                x_end=target_x,
+                y_end=target_y,
+                speed=12,
+                path="JUEGO_FINAL1/images/gui/hi_overlays/hi_overlay_variant_pigs2x_hi_png_1354840459.png",
+                frame_rate_ms=5000,
+                move_rate_ms=60,
+            )
+
+            # Agrega la bala a la lista de balas de enemigos
+            enemy_element.bullet_list.append(enemy_bullet)
+
+        # Resto de tu código de actualización...
+
+        for enemy_element in self.enemy_list:
+            enemy_element.update(delta_ms, self.plataform_list)
+
+        # Resto de tu código de actualización...
 
     def draw(self, screen):
         self.surface.fill(
@@ -117,7 +144,21 @@ class FormGameLevel1:
         for enemy_element in self.enemy_list:
             enemy_element.draw(self.surface)
 
-        self.player_1.draw(self.surface)
+        self.player.draw(self.surface)
 
         # Dibuja la superficie en la pantalla
         screen.blit(self.surface, (0, 0))
+
+        ##########################
+
+        # Dibujar balas del jugador
+        for bullet in self.player.bullet_list:
+            bullet.draw(screen)
+
+        # Dibujar balas de los enemigos
+        for enemy_element in self.enemy_list:
+            for bullet in enemy_element.bullet_list:
+                bullet.draw(screen)
+
+
+##########################

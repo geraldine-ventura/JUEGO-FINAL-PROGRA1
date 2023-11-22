@@ -1,6 +1,7 @@
 from player import *
 from constantes import *
 from auxiliar import Auxiliar
+from bullet import Bullet
 
 
 class Enemy:
@@ -84,6 +85,24 @@ class Enemy:
         self.tiempo_last_jump = 0  # en base al tiempo transcurrido general
         self.interval_time_jump = interval_time_jump
 
+        self.bullet_list = []
+        self.player = Player
+
+    # En la clase Enemy:
+    def shoot(self, target_x, target_y):
+        bullet = Bullet(
+            self,
+            self.rect.x,  # Pass the x-coordinate of the Enemy's rect
+            self.rect.y,
+            target_x,
+            target_y,
+            speed=20,
+            path="JUEGO_FINAL1/images/gui/hi_overlays/hi_overlay_variant_pigs2x_hi_png354840459.png",
+            frame_rate_ms=100,
+            move_rate_ms=60,
+        )
+        self.bullet_list.append(bullet)
+
     def change_x(self, delta_x):
         self.rect.x += delta_x
         self.collition_rect.x += delta_x
@@ -144,6 +163,10 @@ class Enemy:
     def update(self, delta_ms, plataform_list):
         self.do_movement(delta_ms, plataform_list)
         self.do_animation(delta_ms)
+
+        # Actualizar balas de los enemigos
+        for bullet in self.bullet_list:
+            bullet.update(delta_ms, plataform_list, [self.player], self.player)
 
     def draw(self, screen):
         if DEBUG:

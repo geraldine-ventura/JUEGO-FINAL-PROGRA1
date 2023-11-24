@@ -20,30 +20,65 @@ class Enemy:
         interval_time_jump=100,
     ) -> None:
         self.walk_r = Auxiliar.getSurfaceFromSeparateFiles(
-            "JUEGO_FINAL1/images/caracters/enemies/ork_sword/WALK/WALK_00{0}.png",
+            "images/caracters/enemies/ork_sword/WALK/WALK_00{0}.png",
             0,
             7,
             scale=p_scale,
         )
         self.walk_l = Auxiliar.getSurfaceFromSeparateFiles(
-            "JUEGO_FINAL1/images/caracters/enemies/ork_sword/WALK/WALK_00{0}.png",
+            "images/caracters/enemies/ork_sword/WALK/WALK_00{0}.png",
             0,
             7,
             flip=True,
             scale=p_scale,
         )
         self.stay_r = Auxiliar.getSurfaceFromSeparateFiles(
-            "JUEGO_FINAL1/images/caracters/enemies/ork_sword/IDLE/IDLE_00{0}.png",
+            "images/caracters/enemies/ork_sword/IDLE/IDLE_00{0}.png",
             0,
             7,
             scale=p_scale,
         )
         self.stay_l = Auxiliar.getSurfaceFromSeparateFiles(
-            "JUEGO_FINAL1/images/caracters/enemies/ork_sword/IDLE/IDLE_00{0}.png",
+            "images/caracters/enemies/ork_sword/IDLE/IDLE_00{0}.png",
             0,
             7,
             flip=True,
             scale=p_scale,
+        )
+
+        ##-----------dead-enemy-path---------->
+        self.enemy_dead_r = Auxiliar.getSurfaceFromSeparateFiles(
+            "images/caracters/enemies/ork_sword/DIE/DIE_00{0}.png",
+            0,
+            6,
+            flip=False,
+            scale=p_scale,
+        )
+        self.enemy_dead_l = Auxiliar.getSurfaceFromSeparateFiles(
+            "images/caracters/enemies/ork_sword/DIE/DIE_00{0}.png",
+            0,
+            6,
+            flip=True,
+            scale=p_scale,
+        )
+
+        ##---------enemy_shoot_path----------->
+
+        self.enemy_shoot_r = Auxiliar.getSurfaceFromSeparateFiles(
+            "images/caracters/enemies/ork_sword/DIE/DIE_00{0}.png",
+            1,
+            3,
+            flip=False,
+            scale=p_scale,
+            repeat_frame=2,
+        )
+        self.enemy_shoot_l = Auxiliar.getSurfaceFromSeparateFiles(
+            "images/caracters/enemies/ork_sword/DIE/DIE_00{0}.png",
+            1,
+            3,
+            flip=True,
+            scale=p_scale,
+            repeat_frame=2,
         )
 
         self.contador = 0
@@ -85,23 +120,18 @@ class Enemy:
         self.tiempo_last_jump = 0  # en base al tiempo transcurrido general
         self.interval_time_jump = interval_time_jump
 
-        self.bullet_list = []
-        self.player = Player
+    # receive_shoot(Enemy):------------------>
+    def receive_shoot(self, direction, enemy_shoot_rect):
+        print("Función receive_shoot llamada")
+        print("enemy_shoot_rect:", enemy_shoot_rect)
 
-    # En la clase Enemy:
-    def shoot(self, target_x, target_y):
-        bullet = Bullet(
-            self,
-            self.rect.x,  # Pass the x-coordinate of the Enemy's rect
-            self.rect.y,
-            target_x,
-            target_y,
-            speed=20,
-            path="JUEGO_FINAL1/images/gui/hi_overlays/hi_overlay_variant_pigs2x_hi_png354840459.png",
-            frame_rate_ms=100,
-            move_rate_ms=60,
-        )
-        self.bullet_list.append(bullet)
+        if self.ground_collition_rect.colliderect(enemy_shoot_rect):
+            print("Coalision con enemigo detectada!cambia de animacion dead")
+            if direction == DIRECTION_R:
+                self.animation = self.enemy_dead_r
+            else:
+                self.animation = self.enemy_dead_l
+            # self.reset_animation()  # Restablece la animación después de cambiarla
 
     def change_x(self, delta_x):
         self.rect.x += delta_x
@@ -163,10 +193,6 @@ class Enemy:
     def update(self, delta_ms, plataform_list):
         self.do_movement(delta_ms, plataform_list)
         self.do_animation(delta_ms)
-
-        # Actualizar balas de los enemigos
-        for bullet in self.bullet_list:
-            bullet.update(delta_ms, plataform_list, [self.player], self.player)
 
     def draw(self, screen):
         if DEBUG:

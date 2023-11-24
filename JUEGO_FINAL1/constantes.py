@@ -7,8 +7,8 @@ PATH_IMAGE = "JUEGO_FINAL1/images"
 DIRECTION_L = 0
 DIRECTION_R = 1
 GROUND_COLLIDE_H = 8  # Aprox Gravedad/2 + 1
-# DEBUG = True
-DEBUG = False
+DEBUG = True
+# DEBUG = False
 
 # COLOR CONSTANTS
 C_RED = (255, 0, 0)

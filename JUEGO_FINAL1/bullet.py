@@ -1,9 +1,11 @@
-import pygame  # Agrega esta línea
+import pygame
+
+""" from player import Player """
+""" from enemigo import Enemy """
 from constantes import *
 from auxiliar import Auxiliar
+
 import math
-from enemigo import *
-from player import *
 
 
 class Bullet:
@@ -45,53 +47,51 @@ class Bullet:
 
     def change_x(self, delta_x):
         self.x = self.x + delta_x
-        self.rect.x = int(self.rect.x)
+        self.rect.x = int(self.x)
 
     def change_y(self, delta_y):
         self.y = self.y + delta_y
-        self.rect.y = int(self.rect.y)
+        self.rect.y = int(self.y)
 
-    def do_movement(self, delta_ms, plataform_list, enemy_list, player):
+    def do_movement(self, delta_ms, plataform_list, enemy_list, player_1):
         self.tiempo_transcurrido_move += delta_ms
         if self.tiempo_transcurrido_move >= self.move_rate_ms:
             self.tiempo_transcurrido_move = 0
             self.change_x(self.move_x)
             self.change_y(self.move_y)
-            self.check_impact(plataform_list, enemy_list, player)
+            self.check_impact(enemy_list, player_1)
 
     def do_animation(self, delta_ms):
         self.tiempo_transcurrido_animation += delta_ms
         if self.tiempo_transcurrido_animation >= self.frame_rate_ms:
             self.tiempo_transcurrido_animation = 0
+            pass
 
-    def check_impact(self, plataform_list, enemy_list, player):
-        if (
-            self.is_active
-            and self.owner != player
-            and self.rect.colliderect(player.rect)
-        ):
-            print("IMPACTO PLAYER")
-            player.receive_shoot()
-            self.is_active = False
-
-        # Descomentado para verificar colisiones con enemigos
-        for aux_enemy in enemy_list:
+    def check_impact(self, enemy_list, player_1):
+        # Verifica la colisión con los enemigos
+        if self.is_active:
+            """for enemy_element in enemy_list:
             if (
-                self.is_active
-                and self.owner != aux_enemy
-                and self.rect.colliderect(aux_enemy.rect)
+                isinstance(enemy_element, Enemy)
+                and self.owner != enemy_element
+                and self.rect.colliderect(enemy_element.rect)
             ):
                 print("IMPACTO ENEMY")
                 self.is_active = False
+                enemy_element.receive_shoot()
+            """
+        # Verifica la colisión con el jugador
+        """ if (
+            isinstance(player_1, Player)
+            and self.owner != player_1
+            and self.rect.colliderect(player_1.rect)
+        ):
+            print("IMPACTO PLAYER")
+            self.is_active = False
+            player_1.receive_shoot() """
 
-        # Descomentado para verificar colisiones con plataformas
-        for plataforma in plataform_list:
-            if self.is_active and self.rect.colliderect(plataforma.rect):
-                print("IMPACTO PLATAFORMA")
-                self.is_active = False
-
-    def update(self, delta_ms, plataform_list, enemy_list, player):
-        self.do_movement(delta_ms, plataform_list, enemy_list, player)
+    def update(self, delta_ms, plataform_list, enemy_list, player_1):
+        self.do_movement(delta_ms, plataform_list, enemy_list, player_1)
 
         self.do_animation(delta_ms)
 

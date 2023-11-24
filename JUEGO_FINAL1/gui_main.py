@@ -2,7 +2,7 @@ import pygame
 import sys
 from pygame.locals import *
 from constantes import *
-from gui_form_menu_game_l1 import FormGameLevel1
+from gui_form_menu_game_l1 import FormGameLevel1  # Importa tu módulo
 
 
 # Inicialización de Pygame y otras configuraciones
@@ -29,7 +29,7 @@ while True:
     delta_ms = pygame.time.Clock().tick(FPS)
 
     # Actualizar lógica del juego
-    game_level_1.update(keys, delta_ms)
+    game_level_1.update(lista_eventos, keys, delta_ms)
 
     game_level_1.draw(screen)
 
